@@ -1,0 +1,13 @@
+# List Network Requests
+
+| reqid | method | url | status |
+|---|---|---|---|
+| 52 | GET | http://localhost:3000/dashboard.html | failed - 304 |
+| 53 | GET | https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap | success - 200 |
+| 54 | GET | http://localhost:3000/style.css | failed - 304 |
+| 55 | GET | http://localhost:3000/app.js | failed - 304 |
+| 56 | GET | https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2 | success - 200 |
+| 57 | GET | https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2 | success - 200 |
+| 58 | GET | http://localhost:3000/api/students | failed - 304 |
+| 59 | POST | http://localhost:3000/api/students | success - 200 |
+| 60 | GET | http://localhost:3000/api/students | success - 200 |

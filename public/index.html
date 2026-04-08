@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Attendance Tracker — Login</title>
+  <meta name="description" content="Teacher login for Smart Attendance Tracker." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="login-layout">
+
+  <main class="login-card animate-fade-in">
+    <div class="login-logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+    </div>
+    <h1 class="login-title" id="pageTitle">Welcome back</h1>
+    <p class="login-subtitle" id="pageSubtitle">Please enter your details to sign in.</p>
+
+    <form id="loginForm" class="login-form" autocomplete="off">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          placeholder="Enter your username"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      <div id="loginError" class="alert alert-error hidden">
+        Invalid username or password.
+      </div>
+
+      <button id="loginBtn" type="submit" class="btn btn-primary btn-full">
+        <span id="loginBtnText">Sign In</span>
+        <span id="loginBtnSpinner" class="spinner hidden"></span>
+      </button>
+    </form>
+
+    <p class="login-hint" style="margin-top:20px;">
+      <span id="toggleText">Don't have an account?</span> 
+      <a href="#" id="toggleMode" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign Up</a>
+    </p>
+  </main>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorEl = document.getElementById('loginError');
+    const btnText = document.getElementById('loginBtnText');
+    const spinner = document.getElementById('loginBtnSpinner');
+    const loginBtn = document.getElementById('loginBtn');
+    
+    // Toggle Mode logic
+    let isSignupMode = false;
+    const toggleModeBtn = document.getElementById('toggleMode');
+    const toggleText = document.getElementById('toggleText');
+    const pageTitle = document.getElementById('pageTitle');
+    const pageSubtitle = document.getElementById('pageSubtitle');
+
+    toggleModeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      isSignupMode = !isSignupMode;
+      errorEl.classList.add('hidden');
+      
+      if (isSignupMode) {
+        pageTitle.textContent = 'Create Account';
+        pageSubtitle.textContent = 'Sign up to manage your classes.';
+        btnText.textContent = 'Sign Up';
+        toggleText.textContent = 'Already have an account?';
+        toggleModeBtn.textContent = 'Sign In';
+      } else {
+        pageTitle.textContent = 'Welcome back';
+        pageSubtitle.textContent = 'Please enter your details to sign in.';
+        btnText.textContent = 'Sign In';
+        toggleText.textContent = "Don't have an account?";
+        toggleModeBtn.textContent = 'Sign Up';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.add('hidden');
+      btnText.textContent = isSignupMode ? 'Signing up…' : 'Signing in…';
+      spinner.classList.remove('hidden');
+      loginBtn.disabled = true;
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const endpoint = isSignupMode ? '/api/signup' : '/api/login';
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          sessionStorage.setItem('teacher', JSON.stringify(data.teacher));
+          window.location.href = 'dashboard.html';
+        } else {
+          errorEl.textContent = data.error || 'Invalid username or password.';
+          errorEl.classList.remove('hidden');
+        }
+      } catch {
+        errorEl.textContent = 'Server unreachable. Is the server running?';
+        errorEl.classList.remove('hidden');
+      } finally {
+        btnText.textContent = isSignupMode ? 'Sign Up' : 'Sign In';
+        spinner.classList.add('hidden');
+        loginBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
