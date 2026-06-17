@@ -39,7 +39,7 @@ tabBtns.forEach(btn => {
     tabPanes.forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(`pane-${target}`).classList.add('active');
-    
+
     if (target === 'classes') loadClassesList();
     if (target === 'students') loadStudentsList();
     if (target === 'attendance') initAttendanceTab();
@@ -54,17 +54,17 @@ function showMsg(el, text, type) {
   // We use a global toast system now, 'el' is ignored but kept for signature compatibility
   const container = document.getElementById('toastContainer');
   if (!container) return;
-  
+
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  
-  const icon = type === 'success' 
-    ? `<svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>` 
+
+  const icon = type === 'success'
+    ? `<svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
     : `<svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
 
   toast.innerHTML = `${icon} <span>${text}</span>`;
   container.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(10px) translateX(10px)';
@@ -79,7 +79,7 @@ function getInitial(name) {
 
 function escHtml(str) {
   const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+  return str.replace(/[&<>"']/g, function (m) { return map[m]; });
 }
 
 // =====================================================
@@ -92,7 +92,7 @@ async function loadClassesList() {
     const res = await fetch(`/api/classes?teacher_id=${teacher.id}`);
     classesCache = await res.json();
     renderClassesList(classesCache);
-  } catch(e) {
+  } catch (e) {
     console.error('Failed to load classes', e);
   }
 }
@@ -110,7 +110,7 @@ function renderClassesList(classes) {
   list.innerHTML = classes.map(c => `
     <div class="class-card" onclick="window.selectClass(${c.id}, '${escHtml(c.name)}')">
       <h3>${escHtml(c.name)}</h3>
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px;">
         <span style="color:var(--text-dim);">→</span>
         <button type="button" class="btn btn-danger-outline" onclick="event.stopPropagation(); window.deleteClass(${c.id})" style="padding: 4px 8px; font-size: 0.75rem;">Delete</button>
       </div>
@@ -118,15 +118,18 @@ function renderClassesList(classes) {
   `).join('');
 }
 
-window.selectClass = function(id, name) {
+window.selectClass = function (id, name) {
   currentClassId = id;
   currentClassName = name;
   document.getElementById('classContextNav').classList.remove('hidden');
   document.getElementById('sidebarActiveClassName').textContent = name;
+  document.getElementById('attendanceClassName').textContent = 'Class: ' + name;
   document.getElementById('tab-students').click();
 };
 
-window.deleteClass = async function(id) {
+
+
+window.deleteClass = async function (id) {
   try {
     const res = await fetch('/api/classes/' + id, { method: 'DELETE' });
     if (res.ok) {
@@ -149,22 +152,22 @@ document.getElementById('createClassForm').addEventListener('submit', async (e) 
   e.preventDefault();
   const input = document.getElementById('classNameInput');
   const name = input.value.trim();
-  if(!name) return;
-  
+  if (!name) return;
+
   try {
     const res = await fetch('/api/classes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, teacher_id: teacher.id })
     });
-    if(res.ok) {
+    if (res.ok) {
       input.value = '';
       showMsg(document.body, `✅ Class "${name}" created!`, 'success');
       loadClassesList();
     } else {
       showMsg(document.body, '❌ Failed to create class', 'error');
     }
-  } catch(err) {
+  } catch (err) {
     showMsg(document.body, '❌ Server error', 'error');
   }
 });
@@ -206,7 +209,7 @@ function renderStudentList(students) {
   `).join('');
 }
 
-window.deleteStudent = async function(id) {
+window.deleteStudent = async function (id) {
   try {
     const res = await fetch('/api/students/' + id, { method: 'DELETE' });
     if (res.ok) {
@@ -251,11 +254,11 @@ document.getElementById('addStudentForm').addEventListener('submit', async (e) =
 // =====================================================
 // TAB 2 — MARK ATTENDANCE (Bulk per date)
 // =====================================================
-const attDateInput   = document.getElementById('attDate');
-const attGridWrap    = document.getElementById('attGridWrap');
-const attBody        = document.getElementById('attBody');
-const attEmptyMsg    = document.getElementById('attEmptyMsg');
-const attendanceMsg  = document.getElementById('attendanceMsg');
+const attDateInput = document.getElementById('attDate');
+const attGridWrap = document.getElementById('attGridWrap');
+const attBody = document.getElementById('attBody');
+const attEmptyMsg = document.getElementById('attEmptyMsg');
+const attendanceMsg = document.getElementById('attendanceMsg');
 
 // Set today's date as default
 attDateInput.valueAsDate = new Date();
@@ -424,8 +427,8 @@ async function loadReport() {
     }
 
     // Summary stats
-    const totalStudents  = rows.length;
-    const safeCount      = rows.filter(r => r.defaulter_status === 'Safe').length;
+    const totalStudents = rows.length;
+    const safeCount = rows.filter(r => r.defaulter_status === 'Safe').length;
     const defaulterCount = rows.filter(r => r.defaulter_status === 'Defaulter').length;
 
     summaryRow.innerHTML = `

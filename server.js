@@ -105,6 +105,26 @@ app.delete('/api/classes/:id', async (req, res) => {
   res.json({ success: true });
 });
 
+// PUT /api/classes/:id — rename a class
+app.put('/api/classes/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name } = req.body;
+  if (!id) return res.status(400).json({ error: 'Invalid class ID.' });
+  if (!name || !name.trim()) return res.status(400).json({ error: 'Class name is required.' });
+
+  const { data, error } = await supabase
+    .from('classes')
+    .update({ name: name.trim() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.json({ success: true, class: data });
+});
+
 // =====================================================
 // STUDENT ROUTES
 // =====================================================
