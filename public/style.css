@@ -474,7 +474,7 @@ p {
 
 .class-card {
   padding: 16px;
-  background: var(--surface-bg);
+  background: var(--bg-surface);
   border: 1px solid var(--border-light);
   border-radius: 8px;
   cursor: pointer;
@@ -482,6 +482,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .class-card:hover {
@@ -494,7 +495,9 @@ p {
   font-size: 1rem;
   margin: 0;
   font-weight: 600;
-  color: var(--text);
+  color: var(--text-main);
+  word-break: break-word;
+  flex: 1;
 }
 
 /* Main Content Area */
@@ -538,7 +541,80 @@ p {
   gap: 24px;
 }
 
-@media (max-width: 900px) {
+/* =========================================================
+   MOBILE HEADER & BACKDROP OVERLAY
+   ========================================================= */
+.mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 60px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* =========================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================= */
+
+/* Tablet viewports: Sidebar collapses to icon strip */
+@media (max-width: 900px) and (min-width: 769px) {
   .grid-2 {
     grid-template-columns: 1fr;
   }
@@ -555,7 +631,131 @@ p {
 
   .main-content {
     margin-left: 70px;
-    padding: 20px;
+    padding: 24px;
+  }
+}
+
+/* Mobile viewports: Sliding Drawer Sidebar & Header Stacking */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: var(--shadow-float);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  /* Force details to display inside mobile drawer menu */
+  .sidebar-title,
+  .user-name {
+    display: block !important;
+  }
+
+  .nav-item span {
+    display: inline !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+  }
+
+  .mobile-header {
+    display: flex;
+    margin: -16px -16px 20px -16px; /* offset main-content padding */
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .page-header > div {
+    width: 100%;
+  }
+
+  .page-header .form-group {
+    width: 100%;
+    margin-bottom: 0;
+    align-items: stretch;
+  }
+
+  .page-header input[type="date"] {
+    width: 100%;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  /* Table styling enhancements on mobile */
+  .card.table-responsive {
+    padding: 16px !important;
+  }
+
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table th, 
+  .data-table td {
+    padding: 12px 10px;
+    font-size: 0.825rem;
+  }
+
+  .student-info {
+    gap: 8px;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .att-label {
+    padding: 5px 8px;
+    font-size: 0.775rem;
+  }
+
+  /* Toast position */
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+  
+  .toast {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+/* Small mobile devices padding adjustment */
+@media (max-width: 480px) {
+  .login-layout {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 28px 20px;
+    border-radius: var(--radius-md);
   }
 }
 

@@ -12,8 +12,11 @@
 <body>
 
   <div class="app-layout">
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">AT</div>
         <span class="sidebar-title">Attendance Tracker</span>
@@ -79,6 +82,21 @@
 
     <!-- CONTENT -->
     <main class="main-content">
+
+      <!-- MOBILE HEADER -->
+      <header class="mobile-header">
+        <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="mobile-brand">
+          <div class="sidebar-logo" style="width:28px; height:28px; font-size:0.85rem; border-radius: 6px;">AT</div>
+          <span class="mobile-title">Attendance Tracker</span>
+        </div>
+      </header>
 
       <!-- ======================== TAB 0: CLASSES ======================== -->
       <section id="pane-classes" class="tab-pane active animate-fade-in">
@@ -246,6 +264,33 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <script src="app.js?v=3"></script>
+  <script>
+    // Responsive Mobile Menu Drawer Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('sidebar-open');
+      sidebarOverlay.classList.toggle('active');
+      document.body.style.overflow = sidebar.classList.contains('sidebar-open') ? 'hidden' : '';
+    }
+
+    if (mobileMenuBtn && sidebar && sidebarOverlay) {
+      mobileMenuBtn.addEventListener('click', toggleSidebar);
+      sidebarOverlay.addEventListener('click', toggleSidebar);
+
+      // Close sidebar when clicking any navigation link on mobile
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          if (sidebar.classList.contains('sidebar-open')) {
+            toggleSidebar();
+          }
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>
